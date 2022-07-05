@@ -42,8 +42,9 @@ for i, j, n, st in zip(lat, lon, name, stat):
     color = color_gen(st)
     fg.add_child(folium.Marker(location=[i, j], popup = n, icon=folium.Icon(color = color)))
 
-    
-    
+#adds outlines to the countries provided  in the world.json file
+fg.add_child(folium.GeoJson(data=open('world.json' , mode = 'r', encoding='utf-8-sig').read()))  
+
 map.add_child(fg)
 
 map.save("Map.html")
