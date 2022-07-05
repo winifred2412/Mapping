@@ -43,7 +43,10 @@ for i, j, n, st in zip(lat, lon, name, stat):
     fg.add_child(folium.Marker(location=[i, j], popup = n, icon=folium.Icon(color = color)))
 
 #adds outlines to the countries provided  in the world.json file
-fg.add_child(folium.GeoJson(data=open('world.json' , mode = 'r', encoding='utf-8-sig').read()))  
+#classifies countries by colour based on the population data provided in world.json
+fg.add_child(folium.GeoJson(data=open('world.json' , mode = 'r', encoding='utf-8-sig').read(), 
+style_function= lambda x: {"fillColor" : "green" if x["properties"]["POP2005"] < 10000000
+else "orange" if 10000000 <= x["properties"]["POP2005"] < 20000000 else "red"} ))  
 
 map.add_child(fg)
 
