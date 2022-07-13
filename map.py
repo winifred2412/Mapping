@@ -5,8 +5,7 @@ vol = pd.read_csv("./Volcanoes.txt", delimiter=",")
 
 map = folium.Map(location=[38.58, -110], zoom_start= 6, tiles = "Stamen Terrain")
 
-fg = folium.FeatureGroup(name = "My Map")
-
+fgv = folium.FeatureGroup(name = "Volcanoes")
 lat = list(vol["LAT"])
 lon = list(vol["LON"])
 name = list(vol["NAME"])
@@ -40,14 +39,18 @@ def color_gen(status):
 #pop-up uses name of volcanoe instead of name of elev in the original course
 for i, j, n, st in zip(lat, lon, name, stat):
     color = color_gen(st)
-    fg.add_child(folium.Marker(location=[i, j], popup = n, icon=folium.Icon(color = color)))
+    fgv.add_child(folium.Marker(location=[i, j], popup = n, icon=folium.Icon(color = color)))
 
+fgp = folium.FeatureGroup(name = "Population")
 #adds outlines to the countries provided  in the world.json file
 #classifies countries by colour based on the population data provided in world.json
-fg.add_child(folium.GeoJson(data=open('world.json' , mode = 'r', encoding='utf-8-sig').read(), 
+fgp.add_child(folium.GeoJson(data=open('world.json' , mode = 'r', encoding='utf-8-sig').read(), 
 style_function= lambda x: {"fillColor" : "green" if x["properties"]["POP2005"] < 10000000
 else "orange" if 10000000 <= x["properties"]["POP2005"] < 20000000 else "red"} ))  
 
-map.add_child(fg)
+
+map.add_child(fgv)
+map.add_child(fgp)
+map.add_child(folium.LayerControl()) #added control layer to toggle map view to remove volcanoe pointers and population colouring
 
 map.save("Map.html")
