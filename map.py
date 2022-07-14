@@ -10,8 +10,9 @@ lat = list(vol["LAT"])
 lon = list(vol["LON"])
 name = list(vol["NAME"])
 stat = list(vol["STATUS"])
+elev = list(vol["ELEV"]) 
 
-statuses = pd.unique(stat) #unique statuses fount in the "STATUS" column of the valcanoe dataframe
+statuses = pd.unique(stat) #unique statuses found in the "STATUS" column of the valcanoe dataframe
 
 #generates colour for the volcanoe marker based on the stsus provided in the volcanoe.txt
 def color_gen(status):
@@ -22,7 +23,7 @@ def color_gen(status):
     elif status == "Dendrochronology":
         return "darkred"
     elif status == "Radiocarbon":
-        return "pink"
+        return "darkpink" 
     elif status == "Varve Count":
         return "gray"
     elif status == "Holocene?":
@@ -36,10 +37,19 @@ def color_gen(status):
     else:
         return "white"
 
+#html links to google search of the named volcanoe
+html = """<h4>Volcano information:</h4>
+Name: <a href="https://www.google.com/search?q=%%22%s%%22" target="_blank">%s</a> <br></br>
+Height: %s m
+"""
 #pop-up uses name of volcanoe instead of name of elev in the original course
-for i, j, n, st in zip(lat, lon, name, stat):
+for i, j, n, st, el in zip(lat, lon, name, stat, elev):
+    iframe = folium.IFrame(html=html % (n, n, el), width=200, height=100)
     color = color_gen(st)
-    fgv.add_child(folium.Marker(location=[i, j], popup = n, icon=folium.Icon(color = color)))
+    pop = folium.Popup(iframe)
+    #circle marker added to make map more readable
+    fgv.add_child(folium.CircleMarker(location=[i, j], radius = 7, fill_opacity = 0.7,
+    popup = pop, fill = True, fill_color = color))
 
 fgp = folium.FeatureGroup(name = "Population")
 #adds outlines to the countries provided  in the world.json file
